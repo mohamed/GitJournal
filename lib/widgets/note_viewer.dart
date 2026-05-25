@@ -15,6 +15,7 @@ import 'package:gitjournal/editors/editor_scroll_view.dart';
 import 'package:gitjournal/folder_views/common.dart';
 import 'package:gitjournal/logger/logger.dart';
 import 'package:gitjournal/markdown/markdown_renderer.dart';
+import 'package:gitjournal/utils/rtl.dart';
 import 'package:gitjournal/widgets/notes_backlinks.dart';
 import 'package:org_flutter/org_flutter.dart';
 import 'package:provider/provider.dart';
@@ -50,7 +51,12 @@ class NoteViewer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          NoteTitleHeader(note.title ?? ""),
+          Directionality(
+            textDirection: detectTextDirection(
+              note.title?.isNotEmpty == true ? note.title! : note.body,
+            ),
+            child: NoteTitleHeader(note.title ?? ""),
+          ),
           Padding(
             padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
             child: MarkdownRenderer(

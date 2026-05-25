@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:gitjournal/core/note.dart';
 import 'package:gitjournal/core/notes/note.dart';
 import 'package:gitjournal/utils/markdown.dart';
+import 'package:gitjournal/utils/rtl.dart';
 import 'package:gitjournal/widgets/highlighted_text.dart';
 import 'package:intl/intl.dart';
 
@@ -57,14 +58,17 @@ class NoteTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (note.title != null)
-            HighlightedText(
-              text: note.title!,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: textTheme.titleLarge!
-                  .copyWith(fontSize: textTheme.titleLarge!.fontSize! * 0.8),
-              highlightText: searchTerm,
-              highlightTextLowerCase: searchTermLowerCase,
+            Directionality(
+              textDirection: detectTextDirection(note.title!),
+              child: HighlightedText(
+                text: note.title!,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: textTheme.titleLarge!
+                    .copyWith(fontSize: textTheme.titleLarge!.fontSize! * 0.8),
+                highlightText: searchTerm,
+                highlightTextLowerCase: searchTermLowerCase,
+              ),
             ),
           if (note.title != null) const SizedBox(height: 8.0),
           if (note.title == null && note.type == NoteType.Journal)
@@ -140,14 +144,17 @@ class NoteTile extends StatelessWidget {
   Widget _buildBody(BuildContext context, String text) {
     var textTheme = Theme.of(context).textTheme;
 
-    return HighlightedText(
-      text: text,
-      highlightText: searchTerm,
-      highlightTextLowerCase: searchTermLowerCase,
-      style: textTheme.titleMedium!
-          .copyWith(fontSize: textTheme.titleMedium!.fontSize! * 0.9),
-      overflow: TextOverflow.ellipsis,
-      maxLines: _maxLines - 1,
+    return Directionality(
+      textDirection: detectTextDirection(text),
+      child: HighlightedText(
+        text: text,
+        highlightText: searchTerm,
+        highlightTextLowerCase: searchTermLowerCase,
+        style: textTheme.titleMedium!
+            .copyWith(fontSize: textTheme.titleMedium!.fontSize! * 0.9),
+        overflow: TextOverflow.ellipsis,
+        maxLines: _maxLines - 1,
+      ),
     );
   }
 }

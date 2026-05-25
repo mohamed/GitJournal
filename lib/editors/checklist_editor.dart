@@ -15,6 +15,7 @@ import 'package:gitjournal/editors/common.dart';
 import 'package:gitjournal/editors/note_title_editor.dart';
 import 'package:gitjournal/editors/utils/disposable_change_notifier.dart';
 import 'package:gitjournal/l10n.dart';
+import 'package:gitjournal/utils/rtl.dart';
 import 'package:gitjournal/utils/utils.dart';
 import 'package:time/time.dart';
 
@@ -396,19 +397,27 @@ class _ChecklistItemTileState extends State<ChecklistItemTile> {
       );
     }
 
-    var editor = TextField(
-      autofocus: widget.autofocus,
-      focusNode: widget.focusNode,
-      keyboardType: TextInputType.text,
-      maxLines: null,
-      style: style,
-      textCapitalization: TextCapitalization.sentences,
-      controller: _textController,
-      decoration: const InputDecoration(
-        border: InputBorder.none,
-        isDense: true,
-      ),
-      onEditingComplete: widget.itemFinished,
+    var editor = ValueListenableBuilder<TextEditingValue>(
+      valueListenable: _textController,
+      builder: (context, value, _) {
+        var direction = detectTextDirection(value.text);
+        return TextField(
+          autofocus: widget.autofocus,
+          focusNode: widget.focusNode,
+          keyboardType: TextInputType.text,
+          maxLines: null,
+          style: style,
+          textCapitalization: TextCapitalization.sentences,
+          controller: _textController,
+          decoration: const InputDecoration(
+            border: InputBorder.none,
+            isDense: true,
+          ),
+          onEditingComplete: widget.itemFinished,
+          textDirection: direction,
+          textAlign: TextAlign.start,
+        );
+      },
     );
 
     return ListTile(

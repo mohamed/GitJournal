@@ -16,6 +16,7 @@ import 'package:gitjournal/editors/editor_scroll_view.dart';
 import 'package:gitjournal/editors/undo_redo.dart';
 import 'package:gitjournal/editors/utils/disposable_change_notifier.dart';
 import 'package:gitjournal/l10n.dart';
+import 'package:gitjournal/utils/rtl.dart';
 import 'package:gitjournal/utils/utils.dart';
 
 import 'org_text_controller.dart';
@@ -244,25 +245,33 @@ class _NoteEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: textController,
+      builder: (context, value, _) {
+        var theme = Theme.of(context);
+        var direction = detectTextDirection(value.text);
 
-    return TextField(
-      autofocus: autofocus,
-      keyboardType: TextInputType.multiline,
-      maxLines: null,
-      style: textStyle(context),
-      decoration: InputDecoration(
-        hintText: context.loc.editorsCommonDefaultBodyHint,
-        border: InputBorder.none,
-        isDense: true,
-        fillColor: theme.scaffoldBackgroundColor,
-        hoverColor: theme.scaffoldBackgroundColor,
-        isCollapsed: true,
-      ),
-      controller: textController,
-      textCapitalization: TextCapitalization.sentences,
-      scrollPadding: const EdgeInsets.all(0.0),
-      onChanged: (_) => onChanged(),
+        return TextField(
+          autofocus: autofocus,
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          style: textStyle(context),
+          decoration: InputDecoration(
+            hintText: context.loc.editorsCommonDefaultBodyHint,
+            border: InputBorder.none,
+            isDense: true,
+            fillColor: theme.scaffoldBackgroundColor,
+            hoverColor: theme.scaffoldBackgroundColor,
+            isCollapsed: true,
+          ),
+          controller: textController,
+          textCapitalization: TextCapitalization.sentences,
+          scrollPadding: const EdgeInsets.all(0.0),
+          onChanged: (_) => onChanged(),
+          textDirection: direction,
+          textAlign: TextAlign.start,
+        );
+      },
     );
   }
 }
