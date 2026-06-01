@@ -269,12 +269,12 @@ class _NoteEditorState extends State<_NoteEditor> {
     var theme = Theme.of(context);
     var appConfig = context.watch<AppConfig>();
 
-    return ValueListenableBuilder<TextEditingValue>(
+    final textField = ValueListenableBuilder<TextEditingValue>(
       valueListenable: widget.textController,
       builder: (context, value, _) {
         var direction = detectTextDirection(value.text);
 
-        var textField = TextField(
+        return TextField(
           key: _textFieldKey,
           focusNode: _focusNode,
           autofocus: widget.autofocus,
@@ -296,31 +296,31 @@ class _NoteEditorState extends State<_NoteEditor> {
           textDirection: direction,
           textAlign: TextAlign.start,
         );
-
-        if (!appConfig.experimentalTagAutoCompletion) {
-          return textField;
-        }
-
-        final rootFolder = context.read<NotesFolderFS>();
-        final inlineTagsView = InlineTagsProvider.of(context);
-
-        futureBuilder() async {
-          var allTags =
-              await rootFolder.getNoteTagsRecursively(inlineTagsView);
-
-          Log.d("Building autocompleter with $allTags");
-          return AutoCompletionWidget(
-            textFieldStyle: _NoteEditor.textStyle(context),
-            textFieldKey: _textFieldKey,
-            textFieldFocusNode: _focusNode,
-            textController: widget.textController,
-            tags: allTags.toList(),
-            child: textField,
-          );
-        }
-
-        return FutureBuilderWithProgress(future: futureBuilder());
       },
     );
+
+    if (!appConfig.experimentalTagAutoCompletion) {
+      return textField;
+    }
+
+    final rootFolder = context.read<NotesFolderFS>();
+    final inlineTagsView = InlineTagsProvider.of(context);
+
+    futureBuilder() async {
+      var allTags =
+          await rootFolder.getNoteTagsRecursively(inlineTagsView);
+
+      Log.d("Building autocompleter with $allTags");
+      return AutoCompletionWidget(
+        textFieldStyle: _NoteEditor.textStyle(context),
+        textFieldKey: _textFieldKey,
+        textFieldFocusNode: _focusNode,
+        textController: widget.textController,
+        tags: allTags.toList(),
+        child: textField,
+      );
+    }
+
+    return FutureBuilderWithProgress(future: futureBuilder());
   }
 }
