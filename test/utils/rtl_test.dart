@@ -61,6 +61,10 @@ void main() {
     test('Digits-only defaults to LTR', () {
       expect(detectTextDirection('12345'), TextDirection.ltr);
     });
+
+    test('Punctuation-only defaults to LTR', () {
+      expect(detectTextDirection('!@#\$%'), TextDirection.ltr);
+    });
   });
 
   group('isRtlText', () {
