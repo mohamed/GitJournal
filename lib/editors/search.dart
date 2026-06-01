@@ -172,6 +172,7 @@ double calculateTextHeight({
   required String text,
   required TextStyle style,
   required GlobalKey editorKey,
+  TextDirection textDirection = TextDirection.ltr,
 }) {
   if (editorKey.currentContext == null) {
     return -1;
@@ -181,7 +182,7 @@ double calculateTextHeight({
   var editorWidth = renderBox.size.width;
 
   var painter = TextPainter(
-    textDirection: TextDirection.ltr,
+    textDirection: textDirection,
     text: TextSpan(style: style, text: text),
     maxLines: null,
   );

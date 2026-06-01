@@ -21,6 +21,7 @@ import 'package:gitjournal/l10n.dart';
 import 'package:gitjournal/logger/logger.dart';
 import 'package:gitjournal/settings/app_config.dart';
 import 'package:gitjournal/utils/utils.dart';
+import 'package:gitjournal/utils/rtl.dart';
 import 'package:gitjournal/widgets/future_builder_with_progress.dart';
 import 'package:provider/provider.dart';
 
@@ -266,29 +267,38 @@ class _NoteEditorState extends State<_NoteEditor> {
   @override
   Widget build(BuildContext context) {
     var theme = Theme.of(context);
+    var appConfig = context.watch<AppConfig>();
 
-    var textField = TextField(
-      key: _textFieldKey,
-      focusNode: _focusNode,
-      autofocus: widget.autofocus,
-      keyboardType: TextInputType.multiline,
-      maxLines: null,
-      style: _NoteEditor.textStyle(context),
-      decoration: InputDecoration(
-        hintText: context.loc.editorsCommonDefaultBodyHint,
-        border: InputBorder.none,
-        isDense: true,
-        fillColor: theme.scaffoldBackgroundColor,
-        hoverColor: theme.scaffoldBackgroundColor,
-        isCollapsed: true,
-      ),
-      controller: widget.textController,
-      textCapitalization: TextCapitalization.sentences,
-      scrollPadding: const EdgeInsets.all(0.0),
-      onChanged: (_) => widget.onChanged(),
+    final textField = ValueListenableBuilder<TextEditingValue>(
+      valueListenable: widget.textController,
+      builder: (context, value, _) {
+        var direction = detectTextDirection(value.text);
+
+        return TextField(
+          key: _textFieldKey,
+          focusNode: _focusNode,
+          autofocus: widget.autofocus,
+          keyboardType: TextInputType.multiline,
+          maxLines: null,
+          style: _NoteEditor.textStyle(context),
+          decoration: InputDecoration(
+            hintText: context.loc.editorsCommonDefaultBodyHint,
+            border: InputBorder.none,
+            isDense: true,
+            fillColor: theme.scaffoldBackgroundColor,
+            hoverColor: theme.scaffoldBackgroundColor,
+            isCollapsed: true,
+          ),
+          controller: widget.textController,
+          textCapitalization: TextCapitalization.sentences,
+          scrollPadding: const EdgeInsets.all(0.0),
+          onChanged: (_) => widget.onChanged(),
+          textDirection: direction,
+          textAlign: TextAlign.start,
+        );
+      },
     );
 
-    var appConfig = context.watch<AppConfig>();
     if (!appConfig.experimentalTagAutoCompletion) {
       return textField;
     }
@@ -297,7 +307,8 @@ class _NoteEditorState extends State<_NoteEditor> {
     final inlineTagsView = InlineTagsProvider.of(context);
 
     futureBuilder() async {
-      var allTags = await rootFolder.getNoteTagsRecursively(inlineTagsView);
+      var allTags =
+          await rootFolder.getNoteTagsRecursively(inlineTagsView);
 
       Log.d("Building autocompleter with $allTags");
       return AutoCompletionWidget(

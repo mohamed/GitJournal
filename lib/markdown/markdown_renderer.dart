@@ -18,6 +18,7 @@ import 'package:gitjournal/markdown/parsers/hardwrap.dart';
 import 'package:gitjournal/markdown/parsers/html_entities_syntax.dart';
 import 'package:gitjournal/settings/settings.dart';
 import 'package:gitjournal/utils/link_resolver.dart';
+import 'package:gitjournal/utils/rtl.dart';
 import 'package:gitjournal/utils/utils.dart';
 import 'package:gitjournal/widgets/images/markdown_image.dart';
 import 'package:markdown/markdown.dart' as md;
@@ -128,7 +129,10 @@ class MarkdownRenderer extends StatelessWidget {
       },
     );
 
-    return view;
+    return Directionality(
+      textDirection: detectTextDirection(note.body),
+      child: view,
+    );
   }
 
   static md.ExtensionSet markdownExtensions({bool hardWrapEnabled = false}) {

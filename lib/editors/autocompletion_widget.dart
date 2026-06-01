@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:gitjournal/editors/common.dart';
 import 'package:gitjournal/logger/logger.dart';
+import 'package:gitjournal/utils/rtl.dart';
 import 'package:time/time.dart';
 
 class AutoCompletionWidget extends StatefulWidget {
@@ -95,7 +96,7 @@ class _AutoCompletionWidgetState extends State<AutoCompletionWidget> {
     // print("render Box: ${renderBox.size}");
 
     TextPainter painter = TextPainter(
-      textDirection: TextDirection.ltr,
+      textDirection: detectTextDirection(newText),
       text: TextSpan(
         style: widget.textFieldStyle,
         text: newText,

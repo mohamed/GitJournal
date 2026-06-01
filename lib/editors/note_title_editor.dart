@@ -6,6 +6,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:gitjournal/l10n.dart';
+import 'package:gitjournal/utils/rtl.dart';
 
 class NoteTitleEditor extends StatelessWidget {
   final TextEditingController textController;
@@ -15,23 +16,31 @@ class NoteTitleEditor extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var theme = Theme.of(context);
-    var style = theme.textTheme.titleLarge;
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: textController,
+      builder: (context, value, _) {
+        var theme = Theme.of(context);
+        var style = theme.textTheme.titleLarge;
+        var direction = detectTextDirection(value.text);
 
-    return TextField(
-      keyboardType: TextInputType.text,
-      style: style,
-      decoration: InputDecoration(
-        hintText: context.loc.editorsCommonDefaultTitleHint,
-        border: InputBorder.none,
-        fillColor: theme.scaffoldBackgroundColor,
-        hoverColor: theme.scaffoldBackgroundColor,
-        contentPadding: const EdgeInsets.all(0.0),
-      ),
-      controller: textController,
-      textCapitalization: TextCapitalization.sentences,
-      maxLines: null,
-      onChanged: (_) => onChanged(),
+        return TextField(
+          keyboardType: TextInputType.text,
+          style: style,
+          decoration: InputDecoration(
+            hintText: context.loc.editorsCommonDefaultTitleHint,
+            border: InputBorder.none,
+            fillColor: theme.scaffoldBackgroundColor,
+            hoverColor: theme.scaffoldBackgroundColor,
+            contentPadding: const EdgeInsets.all(0.0),
+          ),
+          controller: textController,
+          textCapitalization: TextCapitalization.sentences,
+          maxLines: null,
+          onChanged: (_) => onChanged(),
+          textDirection: direction,
+          textAlign: TextAlign.start,
+        );
+      },
     );
   }
 }
