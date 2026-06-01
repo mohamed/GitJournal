@@ -34,15 +34,20 @@ class NoteViewer extends StatelessWidget {
     if (note.fileFormat == NoteFileFormat.OrgMode) {
       var handler = OrgLinkHandler(context, note);
 
-      return Org(
-        note.body,
-        onLinkTap: (link) => handler.launchUrl(link.location),
-        onLocalSectionLinkTap: (OrgTree tree) {
-          Log.d("local tree link: $tree");
-        },
-        onSectionLongPress: (OrgSection section) {
-          Log.d('local section long-press: ${section.headline.rawTitle!}');
-        },
+      return Directionality(
+        textDirection: detectTextDirection(
+          note.title?.isNotEmpty == true ? note.title! : note.body,
+        ),
+        child: Org(
+          note.body,
+          onLinkTap: (link) => handler.launchUrl(link.location),
+          onLocalSectionLinkTap: (OrgTree tree) {
+            Log.d("local tree link: $tree");
+          },
+          onSectionLongPress: (OrgSection section) {
+            Log.d('local section long-press: ${section.headline.rawTitle!}');
+          },
+        ),
       );
     }
 
